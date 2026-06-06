@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="refresh" content="3;url=https://insight.bcs-hr.com" />
   <title>BCS Connect</title>
   <style>
     :root {
@@ -62,10 +61,7 @@
       margin-bottom: 32px;
     }
 
-    .logo-wrap svg {
-      height: 52px;
-      width: auto;
-    }
+    .logo-wrap svg { height: 52px; width: auto; }
 
     h1 {
       font-size: 1.5rem;
@@ -96,12 +92,6 @@
       background: var(--color-primary);
       border-radius: var(--radius-full);
       width: 0%;
-      animation: fillBar 3s linear forwards;
-    }
-
-    @keyframes fillBar {
-      from { width: 0%; }
-      to   { width: 100%; }
     }
 
     .status {
@@ -148,59 +138,7 @@
       <?xml version="1.0" encoding="UTF-8"?>
 <svg id="Laag_2" data-name="Laag 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 307.46 132.93">
   <defs>
-    <style>
-      .cls-1 {
-        fill: #041480;
-      }
-
-      .cls-2 {
-        fill: #006a8f;
-      }
-
-      .cls-3 {
-        fill: #05006e;
-      }
-
-      .cls-4 {
-        fill: #02afaf;
-      }
-
-      .cls-5 {
-        fill: #08c;
-      }
-
-      .cls-6 {
-        fill: #000054;
-      }
-
-      .cls-7 {
-        fill: #f6c970;
-      }
-
-      .cls-8 {
-        fill: #fff;
-      }
-
-      .cls-9 {
-        fill: #fc833f;
-      }
-
-      .cls-10 {
-        fill: #de1380;
-      }
-
-      .cls-11 {
-        fill: #e35b62;
-      }
-
-      .cls-12 {
-        opacity: .3;
-      }
-
-      .cls-13 {
-        isolation: isolate;
-      }
-    </style>
+    <style>.cls-1{fill:#041480;}.cls-2{fill:#006a8f;}.cls-3{fill:#05006e;}.cls-4{fill:#02afaf;}.cls-5{fill:#08c;}.cls-6{fill:#000054;}.cls-7{fill:#f6c970;}.cls-8{fill:#fff;}.cls-9{fill:#fc833f;}.cls-10{fill:#de1380;}.cls-11{fill:#e35b62;}.cls-12{opacity:.3;}.cls-13{isolation:isolate;}</style>
   </defs>
   <g id="Laag_2-2" data-name="Laag 2-2">
     <g id="Layer_1" data-name="Layer 1">
@@ -255,15 +193,15 @@
     </div>
 
     <h1>BCS Connect</h1>
-    <p class="subtitle">Je wordt doorgestuurd naar BCS Connect.<br>Even geduld…</p>
+    <p class="subtitle">Klik op de knop om BCS Connect te openen in je browser.</p>
 
-    <div class="progress-track" role="progressbar" aria-label="Doorsturen bezig" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-      <div class="progress-bar"></div>
+    <div class="progress-track">
+      <div class="progress-bar" id="bar"></div>
     </div>
 
     <p class="status" id="status" aria-live="polite">Openen in 3 seconden…</p>
 
-    <a href="https://insight.bcs-hr.com" class="btn">
+    <a href="https://insight.bcs-hr.com" target="_blank" rel="noopener noreferrer" class="btn" id="openBtn">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
         <path d="M8 2.5L13.5 8L8 13.5M2.5 8H13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
@@ -274,18 +212,47 @@
   </div>
 
   <script>
-    let remaining = 3;
+    const TARGET = 'https://insight.bcs-hr.com';
+    const bar = document.getElementById('bar');
     const statusEl = document.getElementById('status');
-    const timer = setInterval(() => {
+    const btn = document.getElementById('openBtn');
+
+    let remaining = 3;
+    let started = false;
+
+    function openTarget() {
+      window.open(TARGET, '_blank');
+      statusEl.textContent = 'Geopend in je browser.';
+    }
+
+    // Animate progress bar
+    let elapsed = 0;
+    const interval = setInterval(() => {
+      elapsed += 50;
+      const pct = Math.min((elapsed / 3000) * 100, 100);
+      bar.style.width = pct + '%';
+      bar.style.transition = 'width 50ms linear';
+    }, 50);
+
+    // Countdown
+    const countdown = setInterval(() => {
       remaining--;
       if (remaining <= 0) {
-        clearInterval(timer);
+        clearInterval(countdown);
+        clearInterval(interval);
+        bar.style.width = '100%';
         statusEl.textContent = 'Doorsturen…';
-        window.location.href = 'https://insight.bcs-hr.com';
+        openTarget();
       } else {
         statusEl.textContent = `Openen in ${remaining} seconde${remaining !== 1 ? 'n' : ''}…`;
       }
     }, 1000);
+
+    // Manual button also triggers open
+    btn.addEventListener('click', (e) => {
+      clearInterval(countdown);
+      clearInterval(interval);
+    });
   </script>
 </body>
 </html>
